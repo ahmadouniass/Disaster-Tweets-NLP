@@ -1,0 +1,13 @@
+Just brainstorming...
+
+PREPROCESSING ----------------
+- Data Overview
+- EDA
+- Data cleaning
+- weighted_count_vectorization
+- embedding_vectorization
+- models groups choice (1,2, 3)
+
+MODELS TRAINING ---------------
+- ML_algo_optimization
+- DL algo running
