@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/549361374820854285/92181003f74449d5a34b796a065c5436/artifacts
+end_time: 1778106013483
+entry_point_name: ''
+experiment_id: '549361374820854285'
+lifecycle_stage: active
+run_id: 92181003f74449d5a34b796a065c5436
+run_name: P08_CharTFIDF_LinearSVC
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778106004242
+status: 3
+tags: []
+user_id: DELL

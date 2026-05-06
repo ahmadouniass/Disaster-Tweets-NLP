@@ -1,0 +1,1 @@
+[('vect', TfidfVectorizer(max_df=0.95, min_df=2, ngram_range=(1, 2))), ('clf', SGDClassifier(alpha=1e-05, loss='log_loss', max_iter=3000, random_state=42))]
