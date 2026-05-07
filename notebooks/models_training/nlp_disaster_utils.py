@@ -1,21 +1,16 @@
 from __future__ import annotations
 
 import os
-import re
 import random
+import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-
 from sklearn.base import BaseEstimator, TransformerMixin, clone
-from sklearn.metrics import (
-    average_precision_score,
-    balanced_accuracy_score,
-    classification_report,
-    roc_auc_score,
-)
+from sklearn.metrics import (average_precision_score, balanced_accuracy_score,
+                             classification_report, roc_auc_score)
 from sklearn.model_selection import train_test_split
 
 RANDOM_STATE = 42
@@ -31,6 +26,7 @@ class ResultsDisplayFrame(pd.DataFrame):
     - "results"       : pipelines en colonnes, métriques en lignes
     - "metric_matrix" : matrice déjà transposée, stylée telle quelle
     """
+
     _metadata = ["_display_mode", "_round_digits"]
 
     @property
@@ -60,7 +56,9 @@ class ResultsDisplayFrame(pd.DataFrame):
         return repr(pd.DataFrame(self))
 
 
-def _wrap_results_display(df: pd.DataFrame, display_mode: str, digits: int = 4) -> ResultsDisplayFrame:
+def _wrap_results_display(
+    df: pd.DataFrame, display_mode: str, digits: int = 4
+) -> ResultsDisplayFrame:
     out = ResultsDisplayFrame(df.copy())
     out._display_mode = display_mode
     out._round_digits = digits
@@ -92,24 +90,29 @@ def style_metric_matrix(metric_df: pd.DataFrame, digits: int = 4):
         max_val = numeric_row.max()
 
         return [
-            "background-color: #C6EFCE; color: #006100; font-weight: bold;"
-            if pd.notna(val) and val == max_val
-            else ""
+            (
+                "background-color: #C6EFCE; color: #006100; font-weight: bold;"
+                if pd.notna(val) and val == max_val
+                else ""
+            )
             for val in numeric_row
         ]
 
     return (
-        df.style
-        .format(
-            lambda x: f"{x:.{digits}f}"
-            if isinstance(x, (int, float, np.integer, np.floating))
-            else x
+        df.style.format(
+            lambda x: (
+                f"{x:.{digits}f}"
+                if isinstance(x, (int, float, np.integer, np.floating))
+                else x
+            )
         )
         .apply(highlight_max_per_row, axis=1)
-        .set_table_styles([
-            {"selector": "th", "props": [("white-space", "nowrap")]},
-            {"selector": "td", "props": [("white-space", "nowrap")]},
-        ])
+        .set_table_styles(
+            [
+                {"selector": "th", "props": [("white-space", "nowrap")]},
+                {"selector": "td", "props": [("white-space", "nowrap")]},
+            ]
+        )
     )
 
 
@@ -127,6 +130,7 @@ def seed_everything(seed: int = RANDOM_STATE, use_tensorflow: bool = False) -> N
     if use_tensorflow:
         try:
             import tensorflow as tf  # type: ignore
+
             tf.random.set_seed(seed)
         except Exception as exc:
             print(
@@ -143,7 +147,9 @@ def build_text_series(
     lowercase: bool = False,
 ) -> pd.Series:
     if text_col not in df.columns:
-        raise ValueError(f"La colonne '{text_col}' est introuvable dans le fichier fourni.")
+        raise ValueError(
+            f"La colonne '{text_col}' est introuvable dans le fichier fourni."
+        )
     text = df[text_col].fillna("").astype(str)
 
     if use_extra_cols:
@@ -245,11 +251,17 @@ def _safe_scores(estimator, X):
 def _extract_report_metrics(report: Dict, prefix: str) -> Dict[str, float]:
     out = {
         f"{prefix}_accuracy": report.get("accuracy", np.nan),
-        f"{prefix}_precision_macro": report.get("macro avg", {}).get("precision", np.nan),
+        f"{prefix}_precision_macro": report.get("macro avg", {}).get(
+            "precision", np.nan
+        ),
         f"{prefix}_recall_macro": report.get("macro avg", {}).get("recall", np.nan),
         f"{prefix}_f1_macro": report.get("macro avg", {}).get("f1-score", np.nan),
-        f"{prefix}_precision_weighted": report.get("weighted avg", {}).get("precision", np.nan),
-        f"{prefix}_recall_weighted": report.get("weighted avg", {}).get("recall", np.nan),
+        f"{prefix}_precision_weighted": report.get("weighted avg", {}).get(
+            "precision", np.nan
+        ),
+        f"{prefix}_recall_weighted": report.get("weighted avg", {}).get(
+            "recall", np.nan
+        ),
         f"{prefix}_f1_weighted": report.get("weighted avg", {}).get("f1-score", np.nan),
     }
     for cls in ("0", "1"):
@@ -293,7 +305,9 @@ def classification_metrics_from_predictions(
     return metrics
 
 
-def evaluate_sklearn_pipeline(name, estimator, X_train, X_test, y_train, y_test) -> Dict[str, float]:
+def evaluate_sklearn_pipeline(
+    name, estimator, X_train, X_test, y_train, y_test
+) -> Dict[str, float]:
     model = clone(estimator)
     model.fit(X_train, y_train)
 
@@ -303,12 +317,22 @@ def evaluate_sklearn_pipeline(name, estimator, X_train, X_test, y_train, y_test)
     test_score = _safe_scores(model, X_test)
 
     result = {"pipeline": name}
-    result.update(classification_metrics_from_predictions(y_train, train_pred, train_score, prefix="train"))
-    result.update(classification_metrics_from_predictions(y_test, test_pred, test_score, prefix="test"))
+    result.update(
+        classification_metrics_from_predictions(
+            y_train, train_pred, train_score, prefix="train"
+        )
+    )
+    result.update(
+        classification_metrics_from_predictions(
+            y_test, test_pred, test_score, prefix="test"
+        )
+    )
     return result
 
 
-def metric_matrix_from_results(results_df: pd.DataFrame, index_col: str = "pipeline") -> pd.DataFrame:
+def metric_matrix_from_results(
+    results_df: pd.DataFrame, index_col: str = "pipeline"
+) -> pd.DataFrame:
     """
     Conserve cette fonction pour ne pas casser les notebooks existants.
     Elle renvoie une matrice transposée :
@@ -316,7 +340,9 @@ def metric_matrix_from_results(results_df: pd.DataFrame, index_col: str = "pipel
     - colonnes = pipelines
     """
     if index_col not in results_df.columns:
-        raise ValueError(f"La colonne '{index_col}' est absente du DataFrame de résultats.")
+        raise ValueError(
+            f"La colonne '{index_col}' est absente du DataFrame de résultats."
+        )
 
     matrix = pd.DataFrame(results_df).set_index(index_col).T
     return _wrap_results_display(matrix, display_mode="metric_matrix", digits=4)
@@ -366,6 +392,7 @@ class GensimMeanEmbeddingVectorizer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         import gensim.downloader as api
+
         self.model_ = api.load(self.model_name)
         self.vector_size_ = self.model_.vector_size
         return self
@@ -390,13 +417,18 @@ class GensimMeanEmbeddingVectorizer(BaseEstimator, TransformerMixin):
 
 
 class SentenceTransformerVectorizer(BaseEstimator, TransformerMixin):
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2", batch_size: int = 64):
+    def __init__(
+        self,
+        model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+        batch_size: int = 64,
+    ):
         self.model_name = model_name
         self.batch_size = batch_size
         self.model_ = None
 
     def fit(self, X, y=None):
         from sentence_transformers import SentenceTransformer
+
         self.model_ = SentenceTransformer(self.model_name)
         return self
 
@@ -413,11 +445,21 @@ class SentenceTransformerVectorizer(BaseEstimator, TransformerMixin):
         return np.asarray(emb)
 
 
-def evaluate_probability_outputs(name, y_train, train_scores, y_test, test_scores, threshold: float = 0.5):
+def evaluate_probability_outputs(
+    name, y_train, train_scores, y_test, test_scores, threshold: float = 0.5
+):
     train_pred = (np.asarray(train_scores).ravel() >= threshold).astype(int)
     test_pred = (np.asarray(test_scores).ravel() >= threshold).astype(int)
 
     result = {"pipeline": name}
-    result.update(classification_metrics_from_predictions(y_train, train_pred, train_scores, prefix="train"))
-    result.update(classification_metrics_from_predictions(y_test, test_pred, test_scores, prefix="test"))
+    result.update(
+        classification_metrics_from_predictions(
+            y_train, train_pred, train_scores, prefix="train"
+        )
+    )
+    result.update(
+        classification_metrics_from_predictions(
+            y_test, test_pred, test_scores, prefix="test"
+        )
+    )
     return result
