@@ -1,0 +1,1 @@
+[('vect', CountVectorizer(min_df=2)), ('clf', MultinomialNB(alpha=0.5))]

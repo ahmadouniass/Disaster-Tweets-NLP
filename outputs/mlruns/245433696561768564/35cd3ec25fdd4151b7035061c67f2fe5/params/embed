@@ -1,0 +1,2 @@
+GensimMeanEmbeddingVectorizer(model_name='fasttext-wiki-news-subwords-300',
+                              normalize=True)

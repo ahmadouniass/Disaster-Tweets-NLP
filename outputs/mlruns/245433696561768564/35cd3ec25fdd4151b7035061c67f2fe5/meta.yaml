@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/245433696561768564/35cd3ec25fdd4151b7035061c67f2fe5/artifacts
+end_time: 1778108267903
+entry_point_name: ''
+experiment_id: '245433696561768564'
+lifecycle_stage: active
+run_id: 35cd3ec25fdd4151b7035061c67f2fe5
+run_name: P18_FastTextMean_LogReg
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778107525118
+status: 3
+tags: []
+user_id: DELL
