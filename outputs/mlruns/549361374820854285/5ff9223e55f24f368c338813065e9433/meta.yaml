@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/549361374820854285/5ff9223e55f24f368c338813065e9433/artifacts
+end_time: 1778188418582
+entry_point_name: ''
+experiment_id: '549361374820854285'
+lifecycle_stage: active
+run_id: 5ff9223e55f24f368c338813065e9433
+run_name: TUNE_P07_CharTFIDF_LogReg
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778188417618
+status: 3
+tags: []
+user_id: DELL

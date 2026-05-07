@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/435086559642514642/525ff5125c3a48e5907e24e49e8b9d44/artifacts
+end_time: 1778189319994
+entry_point_name: ''
+experiment_id: '435086559642514642'
+lifecycle_stage: active
+run_id: 525ff5125c3a48e5907e24e49e8b9d44
+run_name: TUNE_P13_TFIDF_SelectKBest_LogReg
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778189319140
+status: 3
+tags: []
+user_id: DELL

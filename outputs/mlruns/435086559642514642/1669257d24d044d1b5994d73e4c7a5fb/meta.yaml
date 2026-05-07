@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/435086559642514642/1669257d24d044d1b5994d73e4c7a5fb/artifacts
+end_time: 1778189325609
+entry_point_name: ''
+experiment_id: '435086559642514642'
+lifecycle_stage: active
+run_id: 1669257d24d044d1b5994d73e4c7a5fb
+run_name: TUNE_P15_TFIDF_ComplementNB
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778189324733
+status: 3
+tags: []
+user_id: DELL
