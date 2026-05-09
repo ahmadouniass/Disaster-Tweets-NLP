@@ -77,6 +77,29 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Project Specific
+data/raw/
+data/processed/
+outputs/
+mlruns/
+mlflow.db
+*.zip
+*.lnk
+*.docx
+
+# Temporary Scripts
+list_experiments.py
+export_model.py
+inspect_nb.py
+refactor_nb.py
+add_embeddings.py
+
+# Models (Weights are too heavy for standard Git)
+# We keep the config but ignore the heavy tensors
+models/*/model.safetensors
+models/*/pytorch_model.bin
 
 # IPython
 profile_default/

@@ -1,7 +1,7 @@
-artifact_location: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/0
-creation_time: 1778103748701
+artifact_location: file:///C:/Users/DELL/Desktop/TP%20Ml/Disaster-Tweets-NLP/notebooks/models_training/outputs/mlruns/0
+creation_time: 1778274289912
 experiment_id: '0'
-last_update_time: 1778103748701
+last_update_time: 1778274289912
 lifecycle_stage: active
 name: Default
 trace_location: null
