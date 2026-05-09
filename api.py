@@ -34,10 +34,13 @@ async def predict(request: TweetRequest):
         raise HTTPException(status_code=400, detail="Empty text")
     
     try:
-        # Tokenize
-        inputs = tokenizer(request.text, return_tensors="pt", truncation=True, max_length=128)
+        # Tokenization
+        inputs = tokenizer(request.text, return_tensors="pt", truncation=True, padding=True, max_length=128)
         
-        # Predict
+        # DistilBERT doesn't use token_type_ids, we must remove it if present
+        inputs.pop("token_type_ids", None)
+        
+        # Inference
         with torch.no_grad():
             outputs = model(**inputs)
             probs = F.softmax(outputs.logits, dim=1)
