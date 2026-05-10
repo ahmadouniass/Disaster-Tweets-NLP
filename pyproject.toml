@@ -13,8 +13,10 @@ ignore = []
 "notebooks/models_training/*.py" = ["E402", "F401", "F841", "E501"]
 "notebooks/EDA/*.ipynb" = ["E402", "E501"]
 
-# Dans l'app web, on ignore les lignes longues (cause HTML injecté)
-"web_app/*.py" = ["E501"]
+# Dans les apps web, on ignore les lignes longues (cause HTML injecté)
+"**/web_app/*.py" = ["E501"]
+"**/web application/*.py" = ["E501"]
+"**/*app*.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
