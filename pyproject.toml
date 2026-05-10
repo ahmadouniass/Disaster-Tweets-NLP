@@ -10,7 +10,7 @@ ignore = []
 [tool.ruff.lint.per-file-ignores]
 # Dans les notebooks et utilitaires, on est plus souple sur tout
 "*.ipynb" = ["E402", "F401", "F841", "E501"]
-"notebooks/models_training/*.py" = ["F401", "F841", "E501"]
+"notebooks/models_training/*.py" = ["E402", "F401", "F841", "E501"]
 "notebooks/EDA/*.ipynb" = ["E402", "E501"]
 
 # Dans l'app web, on ignore les lignes longues (cause HTML injecté)
