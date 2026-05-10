@@ -394,7 +394,7 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 24p
 <div id="toast"></div>
 
 <script>
-const API_URL = 'http://localhost:8000/predict'; // ← LOCAL API
+const API_URL = 'https://ahmedtrip-disaster-tweet-api.hf.space/predict'; // ← LOCAL API
 
 const examples = [
   {icon:'🔥', text:'Wildfire spreading rapidly through neighborhoods, thousands evacuated'},
