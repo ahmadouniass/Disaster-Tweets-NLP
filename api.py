@@ -1,9 +1,9 @@
+import torch
+import torch.nn.functional as F
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch.nn.functional as F
-import os
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
 
 app = FastAPI(title="Disaster Tweet Prediction API")
 
@@ -32,22 +32,22 @@ class PredictionResponse(BaseModel):
 async def predict(request: TweetRequest):
     if not request.text:
         raise HTTPException(status_code=400, detail="Empty text")
-    
+
     try:
         # Tokenization
         inputs = tokenizer(request.text, return_tensors="pt", truncation=True, padding=True, max_length=128)
-        
+
         # DistilBERT doesn't use token_type_ids, we must remove it if present
         inputs.pop("token_type_ids", None)
-        
+
         # Inference
         with torch.no_grad():
             outputs = model(**inputs)
             probs = F.softmax(outputs.logits, dim=1)
             confidence, prediction_idx = torch.max(probs, dim=1)
-            
+
         label = "Disaster" if prediction_idx.item() == 1 else "No Disaster"
-        
+
         return {
             "prediction": label,
             "confidence": float(confidence.item())

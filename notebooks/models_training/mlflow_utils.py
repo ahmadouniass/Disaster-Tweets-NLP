@@ -1,19 +1,17 @@
 
 from __future__ import annotations
 
-import json
-import tempfile
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import mlflow
 import mlflow.sklearn
 import pandas as pd
-from sklearn.base import clone
-
 from nlp_disaster_utils import (
     classification_metrics_from_predictions,
 )
+from sklearn.base import clone
+
 
 def setup_mlflow_tracking(
     experiment_name: str,

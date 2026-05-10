@@ -2,15 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, Iterable, Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
-
 from datasets import Dataset
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-
 from nlp_disaster_utils import classification_metrics_from_predictions
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 
 def resolve_train_test_paths() -> Tuple[str, str]:

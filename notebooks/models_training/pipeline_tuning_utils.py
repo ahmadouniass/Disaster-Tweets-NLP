@@ -1,21 +1,17 @@
 from __future__ import annotations
 
 import json
-from itertools import product
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import mlflow
 import numpy as np
 import pandas as pd
-
-from sklearn.base import clone
-from sklearn.model_selection import ParameterGrid
-
 from nlp_disaster_utils import (
     classification_metrics_from_predictions,
-    stratified_validation_split,
 )
+from sklearn.base import clone
+from sklearn.model_selection import ParameterGrid
 
 
 def safe_scores(estimator, X):
@@ -72,10 +68,10 @@ def fit_transform_preprocessor_once(preprocessor, X_fit, y_fit, X_val=None, X_te
 
 def compute_primary_score(y_true, y_pred, metric_name: str = "f1_pos") -> float:
     from sklearn.metrics import (
-        f1_score,
-        recall_score,
-        precision_score,
         balanced_accuracy_score,
+        f1_score,
+        precision_score,
+        recall_score,
     )
 
     if metric_name == "f1_pos":
@@ -190,6 +186,7 @@ def refit_best_estimator_on_full_train(
         y_score=None,
         prefix="test",
     )
+
     return {
         "preprocessor": pre,
         "estimator": est,

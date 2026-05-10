@@ -7,6 +7,7 @@ Connection: Local FastAPI (http://localhost:8000)
 import streamlit as st
 import streamlit.components.v1 as components
 
+
 st.set_page_config(
     page_title="Disaster Tweet Detection",
     page_icon="🛰️",

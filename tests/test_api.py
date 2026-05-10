@@ -1,6 +1,7 @@
-import pytest
 from fastapi.testclient import TestClient
+
 from api import app
+
 
 client = TestClient(app)
 
@@ -22,8 +23,8 @@ def test_predict_success_format():
     # Note: On teste le format, la prédiction réelle dépend du chargement du modèle
     test_tweet = "There is a massive fire in the city center!"
     response = client.post("/predict", json={"text": test_tweet})
-    
-    # Si le modèle est chargé, on attend un 200. 
+
+    # Si le modèle est chargé, on attend un 200.
     # Si on est en environnement de test sans poids (LFS), on gère l'erreur potentielle.
     if response.status_code == 200:
         data = response.json()

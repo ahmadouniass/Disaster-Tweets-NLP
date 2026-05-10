@@ -1,39 +1,40 @@
-from pathlib import Path
-from contextlib import nullcontext
+# %pip install -q pandas numpy scikit-learn torch transformers datasets accelerate openpyxl mlflow
+
 import json
-import shutil
+import os
 import warnings
+from contextlib import nullcontext
+from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import mlflow
+import pandas as pd
 
-from transformers import (
-    AutoTokenizer,
-    AutoModelForSequenceClassification,
-    TrainingArguments,
-    Trainer,
-    DataCollatorWithPadding,
-    EarlyStoppingCallback,
-)
 
-from nlp_disaster_utils import (
-    seed_everything,
-    load_train_test_xy,
-    stratified_validation_split,
-    round_results,
-    metric_matrix_from_results,
-    save_results_bundle,
-)
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 
 from bert_family_utils import (
-    resolve_train_test_paths,
-    make_hf_dataset,
     compute_metrics_binary,
     evaluate_trainer_on_dataset,
-    trainer_history_to_dataframe,
+    make_hf_dataset,
     make_jsonable_config,
+    trainer_history_to_dataframe,
 )
+from nlp_disaster_utils import (
+    load_train_test_xy,
+    round_results,
+    seed_everything,
+    stratified_validation_split,
+)
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    DataCollatorWithPadding,
+    EarlyStoppingCallback,
+    Trainer,
+    TrainingArguments,
+)
+
 
 seed_everything(42)
 pd.set_option("display.max_columns", None)
@@ -44,7 +45,7 @@ print("MLflow :", mlflow.__version__)
 
 
 MODEL_NAME = "distilbert-base-uncased"
-PIPELINE_NAME = "DistilBERT"
+PIPELINE_NAME = "BERT_base_uncased"
 
 TEXT_COL = "text"
 LABEL_COL = "target"
@@ -56,24 +57,44 @@ RANDOM_STATE = 42
 
 BASELINE_CONFIG = {
   "learning_rate": 2e-05,
-  "batch_size": 16,
+  "batch_size": 8,
   "num_epochs": 3,
   "weight_decay": 0.01,
   "max_len": 96
 }
 
 TUNING_CANDIDATES = [
- 
+  {
+    "learning_rate": 2e-05,
+    "batch_size": 8,
+    "num_epochs": 2,
+    "weight_decay": 0.01,
+    "max_len": 96
+  },
+  {
+    "learning_rate": 2e-05,
+    "batch_size": 8,
+    "num_epochs": 3,
+    "weight_decay": 0.01,
+    "max_len": 96
+  },
+  {
+    "learning_rate": 3e-05,
+    "batch_size": 8,
+    "num_epochs": 2,
+    "weight_decay": 0.01,
+    "max_len": 96
+  },
   {
     "learning_rate": 2e-05,
     "batch_size": 16,
-    "num_epochs": 3,
+    "num_epochs": 2,
     "weight_decay": 0.01,
     "max_len": 96
   }
 ]
 
-OUTPUT_DIR = Path("outputs/BERT_distilbert")
+OUTPUT_DIR = Path("../../outputs/BERT_bert_base_uncased")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 BASELINE_ARTIFACTS_DIR = OUTPUT_DIR / "baseline_artifacts"
@@ -81,12 +102,13 @@ TUNING_ARTIFACTS_DIR = OUTPUT_DIR / "tuning_artifacts"
 BASELINE_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 TUNING_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_STEM = "BERT_distilbert"
+OUTPUT_STEM = "BERT_bert_base_uncased"
 
 USE_MLFLOW = True
-MLFLOW_EXPERIMENT_NAME = "DT_BERT_DistilBERT"
-MLFLOW_TRACKING_URI = Path("outputs/mlruns").resolve().as_uri()
+MLFLOW_EXPERIMENT_NAME = "DT_BERT_BERTBaseUncased"
+MLFLOW_TRACKING_URI = Path("../../outputs/mlruns").resolve().as_uri()
 MLFLOW_LOG_MODEL = False
+
 
 
 if USE_MLFLOW:
@@ -97,35 +119,9 @@ if USE_MLFLOW:
 else:
     print("MLflow désactivé.")
 
-TRAIN_PATH = "train_cleaned.csv"
-TEST_PATH = "test_cleaned.csv"
 
 
-df_train_full, X_train_full, y_train_full, df_test, X_test, y_test = load_train_test_xy(
-    train_path=TRAIN_PATH,
-    test_path=TEST_PATH,
-    text_col=TEXT_COL,
-    label_col=LABEL_COL,
-    use_extra_cols=USE_AUX_TEXT_COLUMNS,
-    lowercase=LOWERCASE_TEXT,
-)
-
-X_train, X_val, y_train, y_val = stratified_validation_split(
-    X_train_full,
-    y_train_full,
-    val_size=VAL_SIZE_WITHIN_TRAIN,
-    random_state=RANDOM_STATE,
-)
-
-print("Train complet :", len(X_train_full))
-print("Train tuning  :", len(X_train))
-print("Validation    :", len(X_val))
-print("Test          :", len(X_test))
-
-
-TRAIN_PATH = "train_cleaned.csv"
-TEST_PATH = "test_cleaned.csv"
-
+TRAIN_PATH, TEST_PATH = "C:/Users/DELL/Desktop/TP Ml/Disaster-Tweets-NLP/data/processed_data/train_cleaned.csv", "C:/Users/DELL/Desktop/TP Ml/Disaster-Tweets-NLP/data/processed_data/test_cleaned.csv"
 
 df_train_full, X_train_full, y_train_full, df_test, X_test, y_test = load_train_test_xy(
     train_path=TRAIN_PATH,
@@ -148,14 +144,17 @@ print("Train tuning  :", len(X_train))
 print("Validation    :", len(X_val))
 print("Test          :", len(X_test))
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_NAME,
+    use_fast=False
+)
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
 train_ds = make_hf_dataset(tokenizer, X_train, y_train, max_len=BASELINE_CONFIG["max_len"])
 val_ds = make_hf_dataset(tokenizer, X_val, y_val, max_len=BASELINE_CONFIG["max_len"])
 test_ds = make_hf_dataset(tokenizer, X_test, y_test, max_len=BASELINE_CONFIG["max_len"])
 train_full_ds = make_hf_dataset(tokenizer, X_train_full, y_train_full, max_len=BASELINE_CONFIG["max_len"])
-
 
 def make_training_args(
     output_dir: str,
@@ -168,25 +167,22 @@ def make_training_args(
 ):
     return TrainingArguments(
         output_dir=output_dir,
-
-        eval_strategy="epoch" if do_eval else "no",
+        evaluation_strategy="epoch" if do_eval else "no",
         save_strategy="epoch" if do_eval else "no",
         logging_strategy="epoch",
-
         learning_rate=learning_rate,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
         num_train_epochs=num_epochs,
         weight_decay=weight_decay,
-
         load_best_model_at_end=load_best_model_at_end if do_eval else False,
         metric_for_best_model="f1" if do_eval else None,
         greater_is_better=True if do_eval else None,
-
         report_to="none",
         save_total_limit=1 if do_eval else None,
         seed=42,
     )
+
 
 baseline_run_ctx = mlflow.start_run(run_name=f"BASE_{PIPELINE_NAME}") if USE_MLFLOW else nullcontext()
 
@@ -208,6 +204,7 @@ with baseline_run_ctx:
         args=baseline_args,
         train_dataset=train_ds,
         eval_dataset=val_ds,
+        tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics_binary,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=1)],
@@ -276,6 +273,7 @@ for idx, cfg in enumerate(TUNING_CANDIDATES, start=1):
             args=trial_args,
             train_dataset=trial_train_ds,
             eval_dataset=trial_val_ds,
+            tokenizer=tokenizer,
             data_collator=data_collator,
             compute_metrics=compute_metrics_binary,
             callbacks=[EarlyStoppingCallback(early_stopping_patience=1)],
@@ -323,10 +321,6 @@ tuning_df = pd.DataFrame(tuning_rows).sort_values(
     ascending=False,
 ).reset_index(drop=True)
 
-tuning_df
-
-
-
 best_tuning_row = tuning_df.iloc[0].copy()
 best_config = json.loads(best_tuning_row["config"])
 
@@ -356,6 +350,7 @@ with final_run_ctx:
         model=final_model,
         args=final_args,
         train_dataset=final_train_full_ds,
+        tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics_binary,
     )
@@ -413,6 +408,7 @@ comparison_df = pd.DataFrame([
 
 
 
+
 baseline_export_path = OUTPUT_DIR / f"{OUTPUT_STEM}_baseline_results.csv"
 tuning_export_path = OUTPUT_DIR / f"{OUTPUT_STEM}_tuning_validation_results.csv"
 tuned_export_path = OUTPUT_DIR / f"{OUTPUT_STEM}_tuned_results.csv"
@@ -427,5 +423,3 @@ print("Export baseline  :", baseline_export_path)
 print("Export tuning    :", tuning_export_path)
 print("Export tuned     :", tuned_export_path)
 print("Export comparaison :", comparison_export_path)
-
-
