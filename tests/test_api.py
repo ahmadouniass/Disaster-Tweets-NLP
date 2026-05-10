@@ -1,7 +1,8 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from fastapi.testclient import TestClient
+from unittest.mock import MagicMock, patch
+
 import torch
+from fastapi.testclient import TestClient
+
 
 # On mock le chargement du modèle AVANT d'importer l'app
 with patch("transformers.AutoModelForSequenceClassification.from_pretrained"), \
@@ -27,15 +28,15 @@ def test_predict_success_mock(mock_tokenizer, mock_model):
     """Vérifie le fonctionnement de la prédiction avec un modèle simulé (Mock)."""
     # 1. Simuler la sortie du tokenizer
     mock_tokenizer.return_value = {"input_ids": torch.tensor([[1, 2, 3]]), "attention_mask": torch.tensor([[1, 1, 1]])}
-    
+
     # 2. Simuler la sortie du modèle (Logits)
     mock_outputs = MagicMock()
     mock_outputs.logits = torch.tensor([[0.1, 0.9]]) # 0.9 = Disaster
     mock_model.return_value = mock_outputs
-    
+
     # 3. Appeler l'API
     response = client.post("/predict", json={"text": "Test disaster tweet"})
-    
+
     # 4. Vérifications
     assert response.status_code == 200
     data = response.json()
