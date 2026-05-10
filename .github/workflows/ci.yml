@@ -31,6 +31,5 @@ jobs:
 
     - name: Test with pytest
       run: |
-        # On lance les tests unitaires
-        # On ignore le téléchargement LFS pour gagner du temps/quota en CI
-        pytest
+        # On lance les tests unitaires via le module python pour inclure le PYTHONPATH
+        python -m pytest
