@@ -16,7 +16,7 @@ ignore = []
 # Dans les apps web, on ignore les lignes longues (cause HTML injecté)
 "**/web_app/*.py" = ["E501"]
 "**/web application/*.py" = ["E501"]
-"**/*app*.py" = ["E501"]
+"**/app.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
