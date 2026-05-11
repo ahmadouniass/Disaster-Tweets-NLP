@@ -1,6 +1,6 @@
 """
-Disaster Tweet Detection System — PREMIUM VERSION V7
-Design: Dark/Light Mode + GitHub Icon + Sticky Nav + Improved Footer
+Disaster Tweet Detection System — PREMIUM VERSION V8
+Design: Fixed Navigation + Internal Scrolling + Theme Support
 """
 
 import streamlit as st
@@ -13,15 +13,15 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# Cache tout le chrome Streamlit
 st.markdown("""
 <style>
 #MainMenu, footer, header, .stDeployButton,
 [data-testid="stToolbar"], [data-testid="stDecoration"],
 .viewerBadge_container__r5tak { display: none !important; }
-body, .stApp { background: #07090f !important; }
+body, .stApp { background: #07090f !important; overflow: hidden !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
-section[data-testid="stMain"] > div { padding: 0 !important; }
-iframe { display: block; border: none; }
+iframe { display: block; border: none; height: 100vh !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -40,7 +40,7 @@ HTML_APP = """<!DOCTYPE html>
   --txt:#f8fafc;--txt-muted:#94a3b8;
   --glass: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --nav-bg: rgba(7,9,15,0.7);
+  --nav-bg: rgba(7,9,15,0.85);
 }
 :root[data-theme="light"]{
   --bg:#f8fafc;--bg-card:rgba(255, 255, 255, 0.9);
@@ -49,20 +49,21 @@ HTML_APP = """<!DOCTYPE html>
   --txt:#0f172a;--txt-muted:#64748b;
   --glass: rgba(0, 0, 0, 0.02);
   --glass-border: rgba(0, 0, 0, 0.08);
-  --nav-bg: rgba(248,250,252,0.8);
+  --nav-bg: rgba(248,250,252,0.9);
 }
 
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth; height: 100%;}
 body{
   background:var(--bg);color:var(--txt);
   font-family:var(--ff-b);font-size:15px;line-height:1.6;
   transition: background 0.4s ease, color 0.4s ease;
+  height: 100%; overflow-y: auto; overflow-x: hidden;
 }
 
 /* ─── NAVIGATION ────────────────────────────── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:1000;
-  background:var(--nav-bg);backdrop-filter:blur(12px);
+  background:var(--nav-bg);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--glass-border);
   padding:15px 40px;display:flex;justify-content:space-between;align-items:center;
 }
@@ -72,7 +73,7 @@ nav{
 .nav-links{display:flex;gap:20px}
 .nav-links a{
   text-decoration:none;color:var(--txt-muted);font-size:12px;font-weight:700;
-  text-transform:uppercase;letter-spacing:1px;transition:color 0.2s;
+  text-transform:uppercase;letter-spacing:1px;transition:color 0.2s;cursor:pointer;
 }
 .nav-links a:hover{color:var(--blue)}
 
@@ -86,11 +87,11 @@ nav{
 
 /* ─── HERO ──────────────────────────────────── */
 .hero{
-  position:relative;min-height:500px;
+  position:relative;min-height:550px;
   display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;
   padding:120px 24px 60px;overflow:hidden;
-  background: radial-gradient(circle at 50% -20%, rgba(59,130,246,0.12), transparent 60%);
+  background: radial-gradient(circle at 50% -20%, rgba(59,130,246,0.15), transparent 60%);
 }
 .hero-grid{
   position:absolute;inset:0;z-index:0;opacity:0.2;
@@ -118,8 +119,8 @@ h1{font-family:'Outfit',sans-serif;font-size:clamp(40px,7vw,72px);font-weight:80
 .btn-git:hover{background:var(--txt);color:var(--bg)}
 
 /* ─── SECTIONS ──────────────────────────────── */
-.container{max-width:950px;margin:0 auto;padding:0 24px 40px}
-section{padding-top:100px;margin-top:-100px}
+.container{max-width:950px;margin:0 auto;padding:0 24px 60px}
+section{padding-top:110px;margin-top:0px}
 
 .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:60px}
 .m-card{background:var(--glass);border:1px solid var(--glass-border);padding:35px;border-radius:28px}
@@ -147,7 +148,6 @@ textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1
   margin-top:22px;cursor:pointer;transition:all 0.3s;
   box-shadow:0 12px 24px -6px rgba(59,130,246,0.3);
 }
-.analyze-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
 
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:34px}
 .ex-chip{
@@ -183,16 +183,16 @@ textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1
 .team-member:hover{transform:translateY(-10px);border-color:var(--blue);background:var(--glass)}
 .mem-avatar{width:80px;height:80px;border-radius:50%;border:2px solid var(--glass-border);padding:4px}
 .mem-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
-.mem-name{font-weight:700;font-size:14px}
+.mem-name{font-weight:700;font-size:13px}
 
 /* ─── FOOTER ────────────────────────────────── */
-.footer{background:var(--glass);padding:80px 40px 40px;border-top:1px solid var(--glass-border);margin-top:40px}
+.footer{background:var(--glass);padding:80px 40px 60px;border-top:1px solid var(--glass-border);margin-top:40px}
 .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:60px}
 .f-about-t{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-bottom:15px}
 .f-about-p{color:var(--txt-muted);font-size:14px;line-height:1.7}
 .f-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin-bottom:20px}
 .f-links{display:flex;flex-direction:column;gap:12px}
-.f-links a{text-decoration:none;color:var(--txt-muted);font-size:14px;transition:color 0.2s}
+.f-links a{text-decoration:none;color:var(--txt-muted);font-size:14px;transition:color 0.2s;cursor:pointer}
 .f-links a:hover{color:var(--txt)}
 .f-bottom{margin-top:60px;padding-top:30px;border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--txt-muted)}
 
@@ -209,16 +209,17 @@ textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1
   <div class="nav-logo">DISASTER<span>DETECT</span></div>
   <div class="nav-right">
     <div class="nav-links">
-      <a href="#home">Home</a>
-      <a href="#mission">Mission</a>
-      <a href="#app">Analyze</a>
-      <a href="#team">Team</a>
+      <a onclick="scrollSection('home')">Home</a>
+      <a onclick="scrollSection('mission')">Mission</a>
+      <a onclick="scrollSection('app')">Analyze</a>
+      <a onclick="scrollSection('team')">Team</a>
     </div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">☀️</button>
   </div>
 </nav>
 
-<header id="home" class="hero">
+<div id="home"></div>
+<header class="hero">
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="badges">
@@ -290,7 +291,10 @@ textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1
     <div>
       <div class="f-title">Quick Links</div>
       <div class="f-links">
-        <a href="#home">Home</a><a href="#mission">Mission</a><a href="#app">Analysis App</a><a href="#team">Team</a>
+        <a onclick="scrollSection('home')">Home</a>
+        <a onclick="scrollSection('mission')">Mission</a>
+        <a onclick="scrollSection('app')">Analysis App</a>
+        <a onclick="scrollSection('team')">Team</a>
       </div>
     </div>
     <div>
@@ -309,6 +313,11 @@ textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1
 
 <script>
 const API_URL = 'https://ahmedtrip-disaster-tweet-api.hf.space/predict';
+
+function scrollSection(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({ behavior: 'smooth' });
+}
 
 function toggleTheme(){
   const html = document.documentElement;
@@ -386,4 +395,6 @@ async function analyze(){
 </html>
 """
 
-components.html(HTML_APP, height=1550, scrolling=True)
+# Ici, on force l'iframe à prendre TOUTE la hauteur disponible de la page Streamlit
+# et on désactive le défilement extérieur.
+components.html(HTML_APP, height=1200, scrolling=True)
