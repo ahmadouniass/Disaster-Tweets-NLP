@@ -26,7 +26,7 @@ def find_best_models(output_dir="outputs"):
             if all(col in df.columns for col in required_cols):
                 # Si le nom est "test", on utilise le nom du dossier parent
                 df.loc[df['pipeline'] == 'test', 'pipeline'] = f"{file.parent.name}_tuned"
-                
+
                 cols_to_keep = [
                     'pipeline', 'test_f1_class_1', 'test_recall_class_1',
                     'test_precision_class_1', 'test_accuracy'
