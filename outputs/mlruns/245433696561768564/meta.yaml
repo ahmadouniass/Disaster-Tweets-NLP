@@ -1,8 +1,0 @@
-artifact_location: file:///C:/Users/DELL/Documents/Classes/ISE2/ISE2_2026/SEM2/ML2/Projet/Disaster-Tweets-NLP/outputs/mlruns/245433696561768564
-creation_time: 1778106502790
-experiment_id: '245433696561768564'
-last_update_time: 1778106502790
-lifecycle_stage: active
-name: DT_NB4_classical_sentence_embeddings
-trace_location: null
-workspace: default

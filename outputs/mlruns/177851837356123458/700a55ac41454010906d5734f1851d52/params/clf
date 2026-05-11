@@ -1,1 +1,0 @@
-SGDClassifier(alpha=1e-05, loss='log_loss', max_iter=3000, random_state=42)

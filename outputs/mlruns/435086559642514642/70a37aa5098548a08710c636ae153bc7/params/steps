@@ -1,1 +1,0 @@
-[('vect', TfidfVectorizer(max_df=0.95, min_df=2, ngram_range=(1, 2))), ('select', SelectKBest(k=5000, score_func=<function chi2 at 0x00000232257C59E0>)), ('clf', LogisticRegression(max_iter=2500))]

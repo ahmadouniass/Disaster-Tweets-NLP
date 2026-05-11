@@ -1,6 +1,0 @@
-[('features', FeatureUnion(transformer_list=[('word_tfidf',
-                                TfidfVectorizer(max_df=0.95, min_df=2,
-                                                ngram_range=(1, 2))),
-                               ('char_tfidf',
-                                TfidfVectorizer(analyzer='char_wb', min_df=2,
-                                                ngram_range=(3, 5)))])), ('clf', LogisticRegression(max_iter=3000))]

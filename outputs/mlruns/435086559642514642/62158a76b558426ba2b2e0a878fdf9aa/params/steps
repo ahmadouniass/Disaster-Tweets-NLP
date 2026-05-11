@@ -1,1 +1,0 @@
-[('vect', TfidfVectorizer(max_df=0.95, min_df=2, ngram_range=(1, 2))), ('svd', TruncatedSVD(n_components=300, random_state=42)), ('norm', Normalizer(copy=False)), ('clf', LogisticRegression(max_iter=2500))]

@@ -1,1 +1,0 @@
-[('vect', TfidfVectorizer(max_df=0.95, min_df=2)), ('clf', LogisticRegression(max_iter=2000))]

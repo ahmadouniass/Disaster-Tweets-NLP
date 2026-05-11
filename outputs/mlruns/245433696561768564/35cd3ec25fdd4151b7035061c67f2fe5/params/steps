@@ -1,2 +1,0 @@
-[('embed', GensimMeanEmbeddingVectorizer(model_name='fasttext-wiki-news-subwords-300',
-                              normalize=True)), ('clf', LogisticRegression(max_iter=2500))]

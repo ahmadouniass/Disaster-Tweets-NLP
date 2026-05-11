@@ -1,1 +1,0 @@
-TfidfVectorizer(max_df=0.95, min_df=2)
