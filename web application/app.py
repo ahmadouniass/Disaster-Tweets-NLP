@@ -6,6 +6,7 @@ Design: Fixed Navigation + Internal Scrolling + Theme Support
 import streamlit as st
 import streamlit.components.v1 as components
 
+
 st.set_page_config(
     page_title="Disaster Tweet Detection | BERT",
     page_icon="🛰️",
@@ -354,7 +355,7 @@ async function analyze(){
   const zone = document.getElementById('result-zone');
   btn.disabled = true;
   btn.innerHTML = '⚡ Analysing...';
-  
+
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -364,7 +365,7 @@ async function analyze(){
     const data = await res.json();
     const isDisaster = data.prediction === "Disaster";
     const conf = (data.confidence * 100).toFixed(1);
-    
+
     zone.innerHTML = `
       <div class="result-card ${isDisaster ? 'disaster' : 'safe'}" style="margin-top:30px">
         <div class="result-header">
