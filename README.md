@@ -6,6 +6,7 @@
 ## Liens Utiles
 - [**🌐 Application Web :**](https://disaster-tweets-nlp-ml.streamlit.app/)
 - [**⚙️ API Backend :**](https://ahmedtrip-disaster-tweet-api.hf.space/docs)
+- [**⚙️ Présentation Canvas **](https://canva.link/i6bfyuysalp7vnq)
 
 ## Présentation du Projet
 Ce projet s'attaque au défi de la classification de tweets effectués en situation de crise. L'enjeu est de identifier les alertes réelles de catastrophes (incendies, inondations, séismes) parmi le bruit des réseaux sociaux.
