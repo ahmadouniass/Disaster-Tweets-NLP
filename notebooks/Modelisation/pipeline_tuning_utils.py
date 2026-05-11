@@ -167,26 +167,6 @@ def refit_best_estimator_on_full_train(
     train_score = safe_scores(est, X_train_vec)
     test_score = safe_scores(est, X_test_vec)
 
-    result = {"pipeline": pipeline_name}
-    result.update(classification_metrics_from_predictions(y_train_full, train_pred, train_score, prefix="train"))
-    result.update(classification_metrics_from_predictions(test_pred * 0 + test_pred, test_pred, test_score, prefix="__dummy__"))
-    # écrasement propre juste après
-    result.pop("__dummy___accuracy", None)
-
-    test_metrics = classification_metrics_from_predictions(
-        y_true=None,  # placeholder, will not be used
-        y_pred=np.array([]),  # placeholder
-        y_score=None,
-        prefix="test",
-    )
-    # On évite le placeholder ; on recalcule directement.
-    test_metrics = classification_metrics_from_predictions(
-        y_true=np.asarray([]),  # not used; replaced below
-        y_pred=np.asarray([]),
-        y_score=None,
-        prefix="test",
-    )
-
     return {
         "preprocessor": pre,
         "estimator": est,
