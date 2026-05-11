@@ -1,7 +1,11 @@
 # 🛰️ Disaster Tweets NLP Classification
 
-[![CI Pipeline](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions/workflows/ci.yml/badge.svg)](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://disaster-tweets-nlp-ml.streamlit.app/)
+[![CI Pipeline](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions/workflows/ci.yml/badge.svg)](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions)
+
+## 🔗 Liens Utiles
+- **🌐 Application Web :** [disaster-tweets-nlp-ml.streamlit.app](https://disaster-tweets-nlp-ml.streamlit.app/)
+- **⚙️ API Backend :** [ahmedtrip-disaster-tweet-api.hf.space/docs](https://ahmedtrip-disaster-tweet-api.hf.space/docs)
 
 ## Présentation du Projet
 Ce projet s'attaque au défi de la classification de tweets effectués en situation de crise. L'enjeu est de filtrer le bruit des réseaux sociaux pour identifier les alertes réelles de catastrophes (incendies, inondations, séismes) parmi les messages utilisant un langage figuré ou sans danger. 
@@ -27,12 +31,20 @@ Chaque expérience a été tracée avec **MLflow** pour garantir la reproductibi
 | **Embeddings** | Vecteurs denses via Word2Vec, FastText et Sentence-Transformers. |
 | **Transformers** | Fine-tuning de modèles pré-entraînés (**DistilBERT**, **BERT**, **RoBERTa**). |
 
-### Résultats du Modèle Champion : DistilBERT Tuned
-Le modèle final a été optimisé par recherche d'hyperparamètres (Learning Rate, Weight Decay, Batch Size).
-- **F1-Score (Catastrophe) :** `77.26 %`
-- **Précision :** `74.78 %`
-- **Rappel (Recall) :** `79.91 %`
-- **ROC AUC :** `94.87 %`
+### 🏆 Résultats du Modèle Champion : DistilBERT Tuned
+Le **F1-Score sur la classe Disaster (1)** a été retenu comme métrique principale. Ce choix permet de maximiser la détection des alertes réelles (Rappel) tout en minimisant les fausses alertes (Précision), ce qui est crucial pour la fiabilité d'un système de veille de crise.
+
+| Métrique | Valeur (Test Set) |
+| :--- | :--- |
+| **F1-Score (Catastrophe)** | **77.26 %** |
+| **Précision** | **74.78 %** |
+| **Rappel (Recall)** | **79.91 %** |
+| **ROC AUC** | **94.87 %** |
+
+#### Pourquoi ce choix ? (Analyse Comparative)
+Nos expérimentations ont montré que certains modèles (comme **P16 - GloVe Twitter**) atteignent un Rappel supérieur (**86.05 %**). Cependant, ces modèles souffrent d'une Précision très faible (**54.49 %**), générant ainsi une fausse alerte sur deux.
+
+En privilégiant le **F1-Score**, nous avons sélectionné **DistilBERT** qui offre le meilleur compromis : il détecte **80 %** des catastrophes réelles tout en maintenant une fiabilité de **75 %**. C'est le modèle le plus équilibré pour une mise en production.
 
 ---
 
