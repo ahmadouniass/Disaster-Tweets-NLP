@@ -27,7 +27,7 @@ Chaque expérience a été tracée avec **MLflow** pour garantir la reproductibi
 | **Embeddings** | Vecteurs denses via Word2Vec, FastText et Sentence-Transformers. |
 | **Transformers** | Fine-tuning de modèles pré-entraînés (**DistilBERT**, **BERT**, **RoBERTa**). |
 
-### 🏆 Résultats du Modèle Champion : DistilBERT Tuned
+### Résultats du Modèle Champion : DistilBERT Tuned
 Le modèle final a été optimisé par recherche d'hyperparamètres (Learning Rate, Weight Decay, Batch Size).
 - **F1-Score (Catastrophe) :** `77.26 %`
 - **Précision :** `74.78 %`
@@ -36,7 +36,7 @@ Le modèle final a été optimisé par recherche d'hyperparamètres (Learning Ra
 
 ---
 
-## 🛠️ Stack Technique
+## Stack Technique
 - **Machine Learning :** `PyTorch`, `Transformers (Hugging Face)`, `Scikit-learn`.
 - **Tracking :** `MLflow`.
 - **Backend :** `FastAPI`, `Uvicorn`, `Pydantic`.
@@ -44,7 +44,7 @@ Le modèle final a été optimisé par recherche d'hyperparamètres (Learning Ra
 - **Qualité de code :** `Ruff` (Linter), `Pytest` (Unit Tests avec Mocking).
 - **Infrastructures :** `Hugging Face Spaces` (API), `Streamlit Cloud` (Web App).
 
-## 🏗️ Structure du Repository
+## Structure du Repository
 - `api.py` : Pour la gestion de l'api haute performance.
 - `web application/` : Interface utilisateur avec design premium et feedback en temps réel.
 - `notebooks/` :
@@ -53,7 +53,7 @@ Le modèle final a été optimisé par recherche d'hyperparamètres (Learning Ra
 - `outputs/` : Historique complet des métriques, matrices de confusion et rapports CSV.
 - `tests/` : Suite de tests automatisés validant la logique de l'API.
 
-## 🚀 Installation Locale
+## Installation Locale
 ```bash
 git clone https://github.com/ahmadouniass/Disaster-Tweets-NLP.git
 cd Disaster-Tweets-NLP
