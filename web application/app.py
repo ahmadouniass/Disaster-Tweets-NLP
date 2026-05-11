@@ -1,21 +1,18 @@
 """
-Disaster Tweet Detection System — LOCAL VERSION
-Design: Premium Custom HTML Injector
-Connection: Local FastAPI (http://localhost:8000)
+Disaster Tweet Detection System — PREMIUM VERSION V7
+Design: Dark/Light Mode + GitHub Icon + Sticky Nav + Improved Footer
 """
 
 import streamlit as st
 import streamlit.components.v1 as components
 
-
 st.set_page_config(
-    page_title="Disaster Tweet Detection",
+    page_title="Disaster Tweet Detection | BERT",
     page_icon="🛰️",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# Cache tout le chrome Streamlit pour une immersion totale
 st.markdown("""
 <style>
 #MainMenu, footer, header, .stDeployButton,
@@ -28,505 +25,365 @@ iframe { display: block; border: none; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── App HTML complète adaptée pour le LOCAL ──────────────────────────────────
 HTML_APP = """<!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#07090f;--bg2:#0c1018;--bg3:#111926;--bg4:#162030;
-  --border:#1c2a3e;--border2:#253a55;
-  --blue:#3b82f6;--blue2:#60a5fa;--cyan:#06b6d4;
-  --red:#ef4444;--red2:#fca5a5;--green:#22c55e;--green2:#86efac;
-  --orange:#f97316;
-  --txt:#eef2f8;--txt2:#8ba3c1;--txt3:#3f5570;
-  --ff:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+:root[data-theme="dark"]{
+  --bg:#07090f;--bg-card:rgba(17, 25, 40, 0.75);
+  --blue:#3b82f6;--cyan:#06b6d4;--gold:#f59e0b;
+  --red:#ef4444;--green:#22c55e;
+  --txt:#f8fafc;--txt-muted:#94a3b8;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --nav-bg: rgba(7,9,15,0.7);
 }
+:root[data-theme="light"]{
+  --bg:#f8fafc;--bg-card:rgba(255, 255, 255, 0.9);
+  --blue:#2563eb;--cyan:#0891b2;--gold:#d97706;
+  --red:#dc2626;--green:#16a34a;
+  --txt:#0f172a;--txt-muted:#64748b;
+  --glass: rgba(0, 0, 0, 0.02);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --nav-bg: rgba(248,250,252,0.8);
+}
+
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);color:var(--txt);
-  font-family:var(--fb);font-size:15px;line-height:1.6;
-  overflow-x:hidden;
+  font-family:var(--ff-b);font-size:15px;line-height:1.6;
+  transition: background 0.4s ease, color 0.4s ease;
 }
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ─── NAVIGATION ────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:var(--nav-bg);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--glass-border);
+  padding:15px 40px;display:flex;justify-content:space-between;align-items:center;
+}
+.nav-logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.5px}
+.nav-logo span{color:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:30px}
+.nav-links{display:flex;gap:20px}
+.nav-links a{
+  text-decoration:none;color:var(--txt-muted);font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--blue)}
+
+.theme-toggle{
+  background:var(--glass);border:1px solid var(--glass-border);
+  width:40px;height:40px;border-radius:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.theme-toggle:hover{transform:rotate(15deg) scale(1.1);border-color:var(--blue)}
 
 /* ─── HERO ──────────────────────────────────── */
 .hero{
-  position:relative;min-height:370px;
+  position:relative;min-height:500px;
   display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;
-  padding:88px 24px 68px;overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse 90% 70% at 50% -5%,rgba(59,130,246,.18) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 40% at 85% 40%,rgba(6,182,212,.07) 0%,transparent 60%);
+  padding:120px 24px 60px;overflow:hidden;
+  background: radial-gradient(circle at 50% -20%, rgba(59,130,246,0.12), transparent 60%);
 }
 .hero-grid{
-  position:absolute;inset:0;z-index:0;
-  background-image:
-    linear-gradient(rgba(59,130,246,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(59,130,246,.035) 1px,transparent 1px);
-  background-size:52px 52px;
-  animation:gridScroll 24s linear infinite;
+  position:absolute;inset:0;z-index:0;opacity:0.2;
+  background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+  background-size: 40px 40px;mask-image: radial-gradient(circle at center, black, transparent 80%);
 }
-@keyframes gridScroll{to{background-position:52px 52px}}
-.hero-scan{
-  position:absolute;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  opacity:0;animation:scanDown 6s ease-in-out infinite;z-index:1;
-}
-@keyframes scanDown{
-  0%{top:0;opacity:0}8%{opacity:.5}90%{opacity:.4}100%{top:100%;opacity:0}
-}
-.hero-inner{position:relative;z-index:2}
+.hero-inner{position:relative;z-index:2;max-width:900px}
+.badges{display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
 .badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.28);
-  border-radius:100px;padding:5px 18px 5px 10px;
-  font-family:var(--ff);font-size:11px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);
-  margin-bottom:24px;user-select:none;
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:6px 16px;border-radius:100px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;color:var(--txt-muted);
 }
-.badge-dot{
-  width:7px;height:7px;border-radius:50%;background:var(--cyan);
-  animation:blink 2.2s ease-in-out infinite;
-}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-h1{
-  font-family:var(--ff);font-size:clamp(34px,5.5vw,62px);
-  font-weight:800;line-height:1.05;letter-spacing:-.025em;margin-bottom:18px;
-}
-h1 .g{
-  background:linear-gradient(120deg,var(--blue),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero-sub{
-  font-size:clamp(14px,1.8vw,17px);font-weight:300;color:var(--txt2);
-  max-width:580px;margin:0 auto 34px;line-height:1.75;
-}
-.pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.pill{
-  display:flex;align-items:center;gap:7px;
-  background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:100px;padding:6px 16px;font-size:12px;font-weight:500;color:var(--txt2);
-}
+.badge.champion{color:var(--gold);border-color:rgba(217,119,6,0.3);background:rgba(217,119,6,0.05)}
 
-/* ─── LAYOUT ────────────────────────────────── */
-.container{max-width:840px;margin:0 auto;padding:0 24px 100px}
-.slabel{
-  font-family:var(--ff);font-size:11px;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;color:var(--blue2);
-  display:flex;align-items:center;gap:9px;margin-bottom:12px;
-}
-.slabel::before{content:'';display:block;width:22px;height:2px;background:var(--blue);border-radius:2px}
+h1{font-family:'Outfit',sans-serif;font-size:clamp(40px,7vw,72px);font-weight:800;line-height:1;letter-spacing:-0.03em;margin-bottom:20px}
+.g-txt{background:linear-gradient(to right, #3b82f6, #06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* ─── CARD ──────────────────────────────────── */
-.card{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:24px;padding:40px;
-  position:relative;overflow:hidden;transition:border-color .3s;
+.btn-git{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:12px 24px;border-radius:12px;color:var(--txt);
+  text-decoration:none;font-weight:600;font-size:14px;transition:all 0.3s;
 }
-.card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);opacity:.45;
-}
-.card:hover{border-color:var(--border2)}
-.card-title{font-family:var(--ff);font-size:20px;font-weight:700;margin-bottom:6px}
-.card-desc{font-size:13px;color:var(--txt2);margin-bottom:28px;line-height:1.65}
+.btn-git:hover{background:var(--txt);color:var(--bg)}
 
-/* ─── TEXTAREA ──────────────────────────────── */
+/* ─── SECTIONS ──────────────────────────────── */
+.container{max-width:950px;margin:0 auto;padding:0 24px 40px}
+section{padding-top:100px;margin-top:-100px}
+
+.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:60px}
+.m-card{background:var(--glass);border:1px solid var(--glass-border);padding:35px;border-radius:28px}
+.m-title{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.m-text{font-size:14.5px;color:var(--txt-muted);line-height:1.75}
+
+.main-card{
+  background:var(--bg-card);backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);border-radius:35px;
+  padding:50px;box-shadow: 0 30px 60px -12px rgba(0,0,0,0.15);
+}
+[data-theme="dark"] .main-card{box-shadow: 0 30px 60px -12px rgba(0,0,0,0.6)}
+
 textarea{
-  width:100%;background:var(--bg2);border:1.5px solid var(--border2);
-  border-radius:14px;color:var(--txt);font-family:var(--fb);
-  font-size:15px;line-height:1.7;padding:18px 20px;resize:vertical;
-  min-height:130px;transition:border-color .2s,box-shadow .2s;outline:none;
+  width:100%;background:rgba(0,0,0,0.05);border:1px solid var(--glass-border);
+  border-radius:20px;color:var(--txt);font-family:inherit;padding:24px;
+  font-size:16px;min-height:140px;outline:none;transition:all 0.3s;resize:none;
 }
-textarea::placeholder{color:var(--txt3)}
-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,.11)}
-.char-counter{text-align:right;font-size:12px;color:var(--txt3);margin-top:6px;transition:color .2s}
-.char-counter.warn{color:var(--orange)}
+[data-theme="dark"] textarea{background:rgba(0,0,0,0.25)}
+textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,0.1)}
 
-/* ─── BUTTON ────────────────────────────────── */
-.btn{
-  width:100%;
-  background:linear-gradient(135deg,var(--blue) 0%,#1d4ed8 100%);
-  color:#fff;border:none;border-radius:14px;padding:17px 32px;
-  font-family:var(--ff);font-size:15px;font-weight:700;letter-spacing:.04em;
-  cursor:pointer;margin-top:18px;
-  transition:transform .22s,box-shadow .22s;
-  box-shadow:0 4px 28px rgba(59,130,246,.28);
-  display:flex;align-items:center;justify-content:center;gap:10px;
+.analyze-btn{
+  width:100%;background:var(--blue);color:white;border:none;
+  padding:19px;border-radius:20px;font-weight:700;font-size:16px;
+  margin-top:22px;cursor:pointer;transition:all 0.3s;
+  box-shadow:0 12px 24px -6px rgba(59,130,246,0.3);
 }
-.btn:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(59,130,246,.42)}
-.btn:active{transform:translateY(-1px)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-.spin{
-  width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+.analyze-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
 
-/* ─── EXAMPLES ──────────────────────────────── */
-.ex-section{margin:34px 0}
-.ex-label{
-  font-family:var(--ff);font-size:12px;font-weight:700;
-  color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;
-  margin-bottom:14px;display:flex;align-items:center;gap:8px;
-}
-.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:34px}
 .ex-chip{
-  background:rgba(255,255,255,.025);border:1px solid var(--border);
-  border-radius:14px;padding:13px 16px;font-size:12.5px;color:var(--txt2);
-  line-height:1.55;cursor:pointer;transition:all .2s;
-  display:flex;align-items:flex-start;gap:10px;
-  user-select:none;text-align:left;width:100%;
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:15px;border-radius:15px;font-size:13px;color:var(--txt-muted);
+  text-align:left;cursor:pointer;transition:all 0.2s;display:flex;gap:10px;
 }
-.ex-chip:hover{
-  background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.3);
-  color:var(--txt);transform:translateY(-2px);
-}
-.ex-chip span{font-size:16px;flex-shrink:0;margin-top:1px}
+.ex-chip:hover{background:var(--blue);color:white;border-color:var(--blue)}
 
-/* ─── RESULT ────────────────────────────────── */
-#result-zone{margin-top:28px}
-.result-card{
-  border-radius:24px;padding:38px;
-  position:relative;overflow:hidden;
-  animation:revealUp .5s cubic-bezier(.16,1,.3,1) forwards;
-}
-@keyframes revealUp{
-  from{opacity:0;transform:translateY(24px) scale(.97)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-.result-card.disaster{
-  background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));
-  border:1px solid rgba(239,68,68,.32);
-}
-.result-card.safe{
-  background:linear-gradient(135deg,rgba(34,197,94,.09),rgba(34,197,94,.03));
-  border:1px solid rgba(34,197,94,.32);
-}
-.result-card::after{
-  content:'';position:absolute;top:-50px;right:-50px;
-  width:180px;height:180px;border-radius:50%;pointer-events:none;
-}
-.result-card.disaster::after{background:radial-gradient(circle,rgba(239,68,68,.13),transparent 70%)}
-.result-card.safe::after{background:radial-gradient(circle,rgba(34,197,94,.1),transparent 70%)}
-.result-header{display:flex;align-items:center;gap:18px;margin-bottom:24px}
-.result-emoji{
-  width:60px;height:60px;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;
-}
-.disaster .result-emoji{background:rgba(239,68,68,.14)}
-.safe .result-emoji{background:rgba(34,197,94,.12)}
-.result-title{font-family:var(--ff);font-size:23px;font-weight:800;line-height:1.1;margin-bottom:5px}
-.disaster .result-title{color:var(--red2)}
-.safe .result-title{color:var(--green2)}
-.result-desc{font-size:13px;color:var(--txt2);line-height:1.6}
-.conf-wrap{margin-top:4px}
-.conf-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.conf-lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2)}
-.conf-val{font-family:var(--ff);font-size:22px;font-weight:800}
-.disaster .conf-val{color:var(--red)}
-.safe .conf-val{color:var(--green)}
-.track{height:11px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden;border:1px solid rgba(255,255,255,.04)}
-.fill{height:100%;border-radius:100px;transition:width 1.1s cubic-bezier(.16,1,.3,1)}
-.disaster .fill{background:linear-gradient(90deg,#991b1b,var(--red),#f87171)}
-.safe .fill{background:linear-gradient(90deg,#166534,var(--green),#4ade80)}
-.ticks{display:flex;justify-content:space-between;margin-top:7px;font-size:10.5px;color:var(--txt3);font-weight:500}
+/* ─── RESULTS ───────────────────────────────── */
+#result-zone{margin-top:40px}
+.result-card{border-radius:28px;padding:40px;animation:revealUp .5s ease-out forwards}
+@keyframes revealUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.result-card.disaster{background:rgba(239,68,68,0.08);border:1px solid var(--red)}
+.result-card.safe{background:rgba(34,197,94,0.08);border:1px solid var(--green)}
+.result-header{display:flex;align-items:center;gap:20px;margin-bottom:26px}
+.result-emoji{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;background:rgba(255,255,255,0.1)}
+.result-title{font-family:'Outfit',sans-serif;font-size:25px;font-weight:800;line-height:1.1}
+.disaster .result-title{color:var(--red)}.safe .result-title{color:var(--green)}
+.conf-val{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800}
+.track{height:12px;background:rgba(0,0,0,0.1);border-radius:100px;overflow:hidden;margin-top:10px}
+.fill{height:100%;border-radius:100px;transition:width 1s ease-out}
+.disaster .fill{background:var(--red)}.safe .fill{background:var(--green)}
 
-/* ─── DIVIDER ───────────────────────────────── */
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:52px 0}
-
-/* ─── ABOUT ─────────────────────────────────── */
-.about{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:24px;padding:44px 40px;position:relative;overflow:hidden;
+/* ─── TEAM ──────────────────────────────────── */
+.team-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:18px;margin-top:50px}
+.team-member{
+  background:var(--glass);border:1px solid var(--glass-border);
+  padding:30px 15px;border-radius:24px;text-align:center;
+  text-decoration:none;color:inherit;transition:all 0.3s;
+  display:flex;flex-direction:column;align-items:center;gap:15px;
 }
-.about::before{
-  content:'';position:absolute;bottom:-30px;right:-30px;
-  width:240px;height:240px;
-  background:radial-gradient(circle,rgba(59,130,246,.06),transparent 70%);
-  pointer-events:none;
-}
-.about-title{font-family:var(--ff);font-size:23px;font-weight:800;margin-bottom:10px}
-.about-desc{font-size:14px;color:var(--txt2);line-height:1.75;margin-bottom:34px;max-width:680px}
-.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.feat{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:16px;padding:20px 22px;transition:border-color .2s,transform .2s;
-}
-.feat:hover{border-color:var(--border2);transform:translateY(-3px)}
-.feat-ico{font-size:24px;margin-bottom:12px;display:block}
-.feat-name{font-family:var(--ff);font-size:14.5px;font-weight:700;color:var(--txt);margin-bottom:5px}
-.feat-desc{font-size:12.5px;color:var(--txt3);line-height:1.55}
-.tech-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
-.tech{background:rgba(255,255,255,.035);border:1px solid var(--border2);border-radius:100px;padding:5px 15px;font-size:12px;font-weight:600;color:var(--txt2)}
-.tech.hi{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.38);color:#93c5fd}
-
-/* ─── TOAST ─────────────────────────────────── */
-#toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:var(--bg4);border:1px solid var(--border2);border-radius:14px;
-  padding:14px 24px;font-size:14px;font-weight:500;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;
-  transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:999;
-}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.team-member:hover{transform:translateY(-10px);border-color:var(--blue);background:var(--glass)}
+.mem-avatar{width:80px;height:80px;border-radius:50%;border:2px solid var(--glass-border);padding:4px}
+.mem-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.mem-name{font-weight:700;font-size:14px}
 
 /* ─── FOOTER ────────────────────────────────── */
-footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 24px;text-align:center}
-.foot-title{font-family:var(--ff);font-size:13px;font-weight:700;color:var(--txt2);letter-spacing:.06em;margin-bottom:6px}
-.foot-sub{font-size:11.5px;color:var(--txt3);letter-spacing:.04em}
-.foot-dot{color:var(--blue);margin:0 7px}
+.footer{background:var(--glass);padding:80px 40px 40px;border-top:1px solid var(--glass-border);margin-top:40px}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:60px}
+.f-about-t{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-bottom:15px}
+.f-about-p{color:var(--txt-muted);font-size:14px;line-height:1.7}
+.f-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin-bottom:20px}
+.f-links{display:flex;flex-direction:column;gap:12px}
+.f-links a{text-decoration:none;color:var(--txt-muted);font-size:14px;transition:color 0.2s}
+.f-links a:hover{color:var(--txt)}
+.f-bottom{margin-top:60px;padding-top:30px;border-top:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--txt-muted)}
 
-@media(max-width:600px){
-  .feat-grid,.ex-grid{grid-template-columns:1fr}
-  .card,.about{padding:24px 20px}
-  .hero{padding:56px 18px 48px}
-  .container{padding:0 16px 70px}
+@media(max-width:900px){
+  .footer-inner{grid-template-columns:1fr;gap:40px}
+  .team-grid{grid-template-columns:repeat(2, 1fr)}
+  .mission-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="hero-bg"></div>
+<nav>
+  <div class="nav-logo">DISASTER<span>DETECT</span></div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#mission">Mission</a>
+      <a href="#app">Analyze</a>
+      <a href="#team">Team</a>
+    </div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">☀️</button>
+  </div>
+</nav>
+
+<header id="home" class="hero">
   <div class="hero-grid"></div>
-  <div class="hero-scan"></div>
   <div class="hero-inner">
-    <div class="badge"><span class="badge-dot"></span>NLP · Real-Time Classification</div>
-    <h1>Disaster Tweet<br><span class="g">Detection System</span></h1>
-    <p class="hero-sub">
-      A fine-tuned BERT / DistilBERT model that instantly classifies whether a tweet
-      describes a real-world emergency — powered by Transformers &amp; deployed on Render.
-    </p>
-    <div class="pills">
-      <div class="pill">🤗 HuggingFace Transformers</div>
-      <div class="pill">⚡ Real-Time Inference</div>
-      <div class="pill">☁️ Render API</div>
-      <div class="pill">🎯 Binary NLP Classification</div>
+    <div class="badges">
+      <div class="badge champion">Champion Model: BERT-base</div>
+      <div class="badge">Hugging Face 🤗</div>
+    </div>
+    <h1>Detect Disaster<br><span class="g-txt">In Every Tweet</span></h1>
+    <div class="hero-actions">
+      <a href="https://github.com/ahmadouniass/Disaster-Tweets-NLP" class="btn-git" target="_blank">
+        <svg height="20" viewBox="0 0 16 16" width="20" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        View Source Code
+      </a>
     </div>
   </div>
 </header>
 
-<main class="container">
-  <div class="card">
-    <div class="slabel">Analysis</div>
-    <div class="card-title">Paste or type a tweet below</div>
-    <div class="card-desc">
-      The model will analyse the text and determine whether it describes a genuine
-      disaster event, returning a prediction label and a confidence score.
-    </div>
-    <textarea id="tweetInput" maxlength="280"
-      placeholder="e.g. 'Wildfires destroying thousands of acres, emergency evacuations underway…'"></textarea>
-    <div class="char-counter" id="charCount">0 / 280</div>
-    <button class="btn" id="analyzeBtn" onclick="analyze()">
-      <span id="btnIcon">🔍</span>
-      <span id="btnText">Analyze Tweet</span>
-    </button>
-  </div>
-
-  <div class="ex-section">
-    <div class="ex-label">💡 &nbsp;Try an example</div>
-    <div class="ex-grid" id="exGrid"></div>
-  </div>
-
-  <div id="result-zone"></div>
-  <div class="divider"></div>
-
-  <div class="about">
-    <div class="slabel">About the Model</div>
-    <div class="about-title">How does it work?</div>
-    <p class="about-desc">
-      This system leverages a fine-tuned <strong>DistilBERT</strong> (or BERT) model from HuggingFace
-      Transformers, trained on the <em>Kaggle NLP Getting Started</em> dataset (~10 000 labelled tweets).
-      The model learns contextual patterns that distinguish genuine disaster reports from metaphorical
-      or everyday language, then serves predictions via a REST API deployed on Render.
-    </p>
-    <div class="feat-grid">
-      <div class="feat"><span class="feat-ico">🧠</span>
-        <div class="feat-name">Transformer Architecture</div>
-        <div class="feat-desc">DistilBERT / BERT pre-trained on 3.3 B words, fine-tuned for binary disaster classification.</div>
+<div class="container">
+  <section id="mission">
+    <div class="mission-grid">
+      <div class="m-card">
+        <div class="m-title"><span>🎯</span> Project Mission</div>
+        <div class="m-text">Separating real emergency reports from social media noise using high-precision NLP architectures.</div>
       </div>
-      <div class="feat"><span class="feat-ico">📊</span>
-        <div class="feat-name">NLP Binary Classification</div>
-        <div class="feat-desc">Outputs <em>disaster</em> / <em>not disaster</em> with a softmax confidence score between 0 and 1.</div>
-      </div>
-      <div class="feat"><span class="feat-ico">☁️</span>
-        <div class="feat-name">Deployed on Render</div>
-        <div class="feat-desc">FastAPI / Flask REST endpoint containerised and hosted on Render for serverless inference.</div>
-      </div>
-      <div class="feat"><span class="feat-ico">⚡</span>
-        <div class="feat-name">Real-Time Inference</div>
-        <div class="feat-desc">Average response latency under 2 s per tweet, including tokenisation and forward pass.</div>
+      <div class="m-card">
+        <div class="m-title"><span>🧠</span> Technology</div>
+        <div class="m-text">Fine-tuned BERT transformers capable of understanding global semantic context and intent.</div>
       </div>
     </div>
-    <div class="tech-row">
-      <span class="tech hi">DistilBERT</span>
-      <span class="tech hi">HuggingFace 🤗</span>
-      <span class="tech hi">PyTorch</span>
-      <span class="tech">FastAPI</span>
-      <span class="tech">Python 3.11</span>
-      <span class="tech">Docker</span>
-      <span class="tech">Render</span>
-      <span class="tech">Streamlit</span>
+  </section>
+
+  <section id="app">
+    <div class="main-card">
+      <textarea id="tweetInput" placeholder="Analyze a tweet here..."></textarea>
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">Analyze Tweet</button>
+      <div class="ex-grid" id="exGrid"></div>
+      <div id="result-zone"></div>
+    </div>
+  </section>
+
+  <section id="team">
+    <h2 style="text-align:center; margin-bottom: 40px; font-family:'Outfit',sans-serif; font-size:28px">Our Team</h2>
+    <div class="team-grid">
+      <a href="https://github.com/ahmadouniass" target="_blank" class="team-member">
+        <div class="mem-avatar"><img src="https://github.com/ahmadouniass.png"></div>
+        <div class="mem-name">Ahmadou Niass</div>
+      </a>
+      <a href="https://github.com/Khadidiatou1010" target="_blank" class="team-member">
+        <div class="mem-avatar"><img src="https://github.com/Khadidiatou1010.png"></div>
+        <div class="mem-name">Khadidiatou Coulibaly</div>
+      </a>
+      <a href="https://github.com/dior204" target="_blank" class="team-member">
+        <div class="mem-avatar"><img src="https://github.com/dior204.png"></div>
+        <div class="mem-name">Dior Mbengue</div>
+      </a>
+      <a href="https://github.com/Kerencia2" target="_blank" class="team-member">
+        <div class="mem-avatar"><img src="https://github.com/Kerencia2.png"></div>
+        <div class="mem-name">Pahane S. K. D.</div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="f-about-t">DisasterDetect<span>.</span></div>
+      <p class="f-about-p">Developed for the TP Machine Learning curriculum at ENSAE Dakar. Focused on real-time NLP crisisinformatics.</p>
+    </div>
+    <div>
+      <div class="f-title">Quick Links</div>
+      <div class="f-links">
+        <a href="#home">Home</a><a href="#mission">Mission</a><a href="#app">Analysis App</a><a href="#team">Team</a>
+      </div>
+    </div>
+    <div>
+      <div class="f-title">Resources</div>
+      <div class="f-links">
+        <a href="https://github.com/ahmadouniass/Disaster-Tweets-NLP">GitHub Repo</a>
+        <a href="https://ahmedtrip-disaster-tweet-api.hf.space/docs">API Docs</a>
+      </div>
     </div>
   </div>
-</main>
-
-<footer>
-  <div class="foot-title">
-    Machine Learning Project
-    <span class="foot-dot">·</span>NLP Disaster Classification
-    <span class="foot-dot">·</span>BERT + Render
+  <div class="f-bottom">
+    <div>&copy; 2026 Disaster NLP Project Team</div>
+    <div>Built with 💙 using PyTorch & Streamlit</div>
   </div>
-  <div class="foot-sub">Built with 🤗 HuggingFace Transformers &nbsp;|&nbsp; Kaggle NLP Getting Started dataset</div>
 </footer>
 
-<div id="toast"></div>
-
 <script>
-const API_URL = 'https://ahmedtrip-disaster-tweet-api.hf.space/predict'; // ← LOCAL API
+const API_URL = 'https://ahmedtrip-disaster-tweet-api.hf.space/predict';
+
+function toggleTheme(){
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  btn.innerHTML = next === 'dark' ? '☀️' : '🌙';
+}
 
 const examples = [
-  {icon:'🔥', text:'Wildfire spreading rapidly through neighborhoods, thousands evacuated'},
-  {icon:'🌊', text:'Massive flooding in downtown streets, rescue teams deployed urgently'},
-  {icon:'🌍', text:'7.2 magnitude earthquake hits capital, buildings collapsed downtown'},
-  {icon:'🌀', text:'Category 4 hurricane making landfall, emergency declaration issued'},
-  {icon:'☕', text:'My coffee is literally burning my tongue this morning, total disaster lol'},
-  {icon:'📚', text:'That exam was an absolute disaster but at least summer break is close'},
-  {icon:'🎵', text:'This new album is fire, been listening on repeat all week long'},
-  {icon:'⚽', text:'Just watched an incredible sunset at the beach, feeling so blessed today'},
+  {icon:'🚨', text:'Confirmed: Wildfire approaching the city, evacuations ordered!'},
+  {icon:'🌊', text:'Serious flooding reported downtown after last night flash rain.'},
+  {icon:'🎵', text:'This new album is absolute fire, listening on repeat!'},
+  {icon:'🍿', text:'The movie was a disaster, definitely not worth the price.'}
 ];
 
 const grid = document.getElementById('exGrid');
 examples.forEach(e => {
-  const b = document.createElement('button');
-  b.className = 'ex-chip';
-  b.innerHTML = `<span>${e.icon}</span>${e.text}`;
-  b.onclick = () => {
+  const chip = document.createElement('div');
+  chip.className = 'ex-chip';
+  chip.innerHTML = `<span>${e.icon}</span> ${e.text}`;
+  chip.onclick = () => {
     document.getElementById('tweetInput').value = e.text;
-    updateCount();
-    b.style.borderColor = 'rgba(59,130,246,.5)';
-    setTimeout(() => b.style.borderColor = '', 600);
+    analyze();
   };
-  grid.appendChild(b);
+  grid.appendChild(chip);
 });
 
-const input = document.getElementById('tweetInput');
-const cc    = document.getElementById('charCount');
-function updateCount(){
-  const n = input.value.length;
-  cc.textContent = n + ' / 280';
-  cc.className = 'char-counter' + (n > 240 ? ' warn' : '');
-}
-input.addEventListener('input', updateCount);
-
-function toast(msg, ms=3500){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), ms);
-}
-
 async function analyze(){
-  const text = input.value.trim();
-  if(!text){ toast('⚠️  Please enter a tweet first.'); return; }
+  const text = document.getElementById('tweetInput').value.trim();
+  if(!text) return;
   const btn = document.getElementById('analyzeBtn');
-  const ico = document.getElementById('btnIcon');
-  const lbl = document.getElementById('btnText');
+  const zone = document.getElementById('result-zone');
   btn.disabled = true;
-  ico.innerHTML = '<div class="spin"></div>';
-  lbl.textContent = 'Analysing…';
+  btn.innerHTML = '⚡ Analysing...';
+  
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({text})
     });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const d = await res.json();
-    renderResult(d.prediction, parseFloat(d.confidence));
-  } catch(err) {
-    console.error('API Error:', err);
-    toast('❌ API Connection Error: ' + err.message);
+    const data = await res.json();
+    const isDisaster = data.prediction === "Disaster";
+    const conf = (data.confidence * 100).toFixed(1);
+    
+    zone.innerHTML = `
+      <div class="result-card ${isDisaster ? 'disaster' : 'safe'}" style="margin-top:30px">
+        <div class="result-header">
+          <div class="result-emoji">${isDisaster ? '🚨' : '✅'}</div>
+          <div>
+            <div class="result-title">${isDisaster ? 'Disaster Detected' : 'No Danger Detected'}</div>
+            <div style="font-size:13px; opacity:0.7">Analysis complete.</div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+            <span style="font-size:12px; font-weight:700">Confidence Level</span>
+            <span class="conf-val">${conf}%</span>
+          </div>
+          <div class="track"><div class="fill" style="width:${conf}%"></div></div>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    zone.innerHTML = '<div style="color:var(--red); padding:20px; text-align:center">Error connecting to API.</div>';
   } finally {
     btn.disabled = false;
-    ico.textContent = '🔍';
-    lbl.textContent = 'Analyze Tweet';
+    btn.innerHTML = 'Analyze Tweet';
   }
 }
-
-function simulateAPI(text){
-  const kw = ['fire','flood','earthquake','hurricane','disaster','tsunami',
-    'explosion','crash','emergency','evacuat','dead','killed','wildfire',
-    'tornado','storm','collapse','blaze','rescue'];
-  const t   = text.toLowerCase();
-  const hit = kw.filter(k => t.includes(k)).length;
-  const isD = hit >= 1 && !t.includes('lol') && !t.includes('exam') && !t.includes('coffee');
-  const raw = 0.55 + hit * 0.09 + Math.random() * 0.07;
-  return {
-    prediction: isD ? 'disaster' : 'not disaster',
-    confidence: Math.min(.98, Math.max(.51, isD ? raw : 1 - raw + .05))
-  };
-}
-
-function renderResult(pred, conf){
-  const zone = document.getElementById('result-zone');
-  const isD  = pred.toLowerCase() === 'disaster';
-  const cls  = isD ? 'disaster' : 'safe';
-  const pct  = Math.round(conf * 100);
-  zone.innerHTML = `
-    <div class="result-card ${cls}">
-      <div class="result-header">
-        <div class="result-emoji">${isD ? '🚨' : '✅'}</div>
-        <div>
-          <div class="result-title">${isD ? '⚠️ DISASTER DETECTED' : '✅ NO DISASTER'}</div>
-          <div class="result-desc">${isD
-            ? 'This tweet likely describes a real emergency or catastrophic event.'
-            : 'This tweet does not appear to describe a real disaster event.'}</div>
-        </div>
-      </div>
-      <div class="conf-wrap">
-        <div class="conf-row">
-          <span class="conf-lbl">Confidence Score</span>
-          <span class="conf-val" id="confVal">0%</span>
-        </div>
-        <div class="track"><div class="fill" id="fillBar" style="width:0%"></div></div>
-        <div class="ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-      </div>
-    </div>`;
-  requestAnimationFrame(() => {
-    document.getElementById('fillBar').style.width = pct + '%';
-    animCounter(document.getElementById('confVal'), 0, pct, 1000);
-    zone.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-  });
-}
-
-function animCounter(el, from, to, dur){
-  const s = performance.now();
-  (function step(now){
-    const p = Math.min((now - s) / dur, 1);
-    const e = 1 - Math.pow(1 - p, 4);
-    el.textContent = Math.round(from + (to - from) * e) + '%';
-    if(p < 1) requestAnimationFrame(step);
-  })(performance.now());
-}
-
-input.addEventListener('keydown', e => {
-  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) analyze();
-});
 </script>
 </body>
-</html>"""
+</html>
+"""
 
-# Injecte l'HTML — height suffisamment grand pour contenir toute la page
-components.html(HTML_APP, height=2600, scrolling=True)
+components.html(HTML_APP, height=1550, scrolling=True)
