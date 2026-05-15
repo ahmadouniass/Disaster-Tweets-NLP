@@ -97,8 +97,8 @@ Le projet utilise le dataset Kaggle **"Natural Language Processing with Disaster
 - `target` : 0 = pas une catastrophe, 1 = catastrophe réelle
 
 **Statistiques clés :**
-- 57% des tweets sont de classe 0 (pas une catastrophe)
-- 43% des tweets sont de classe 1 (catastrophe réelle)
+- 83% des tweets sont de classe 0 (pas une catastrophe)
+- 17% des tweets sont de classe 1 (catastrophe réelle)
 - Le déséquilibre est géré par **stratification** lors du split train/validation
 
 ---
