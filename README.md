@@ -36,7 +36,11 @@ Classification binaire de tweets pour distinguer les véritables alertes de cata
 
 **Métrique retenue : F1-Score (classe Disaster)**
 
-Le F1-Score a été choisi car il pénalise aussi bien les alertes manquées (faux négatifs → des vies en danger) que les fausses alertes (faux positifs → saturation des secours). L'Accuracy serait trompeuse à cause du déséquilibre naturel des classes.
+Le F1-Score a été retenu — bien que ce choix puisse prêter à discussion — car il permet de pénaliser à la fois les alertes manquées (faux négatifs, pouvant mettre des vies en danger) et les fausses alertes (faux positifs, susceptibles d’entraîner une saturation des services de secours).
+
+L’Accuracy, quant à elle, serait trompeuse en raison du déséquilibre naturel des classes dans la base de données.
+
+Nous avons également envisagé l’utilisation du F-β Score afin d’accorder davantage de poids à l’accuracy. Cependant, le choix de la valeur du paramètre β reste délicat à justifier et, compte tenu du fort déséquilibre de la base, cette approche peut également présenter certaines limites.
 
 ---
 
