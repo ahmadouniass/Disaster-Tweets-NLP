@@ -3,7 +3,7 @@
 ### *Classification supervisée de tweets en situation de crise via des Transformers pré-entraînés*
 
 [![CI Pipeline](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions/workflows/ci.yml/badge.svg)](https://github.com/ahmadouniass/Disaster-Tweets-NLP/actions)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://disaster-tweets-nlp-ml.streamlit.app/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Deployed-red?logo=streamlit)](https://disaster-tweets-nlp-ml.streamlit.app/)
 
 Classification binaire de tweets pour distinguer les véritables alertes de catastrophes (incendies, séismes, inondations) du langage figuré des réseaux sociaux, afin de permettre aux organismes de secours et aux agences de presse de filtrer le bruit en temps réel.
 
@@ -20,10 +20,10 @@ Classification binaire de tweets pour distinguer les véritables alertes de cata
 5. [Description de chaque fichier](#description-de-chaque-fichier)
 6. [Pipeline MLOps — ordre d'exécution](#pipeline-mlops--ordre-dexécution)
 7. [Résultats](#résultats)
-8. [Tests unitaires](#tests-unitaires)
-9. [CI/CD GitHub Actions](#cicd-github-actions)
-10. [API FastAPI](#api-fastapi)
-11. [Dashboard Streamlit](#dashboard-streamlit)
+8. [CI/CD GitHub Actions](#cicd-github-actions)
+9. [API FastAPI](#api-fastapi)
+10. [Dashboard Streamlit](#dashboard-streamlit)
+11. [Perspectives et extensions](#perspectives-et-extensions-possibles)
 12. [Auteurs](#auteurs)
 
 ---
@@ -435,7 +435,19 @@ La confiance provient de la fonction **Softmax** appliquée aux logits bruts du 
 
 ---
 
-## Équipe & Auteurs
+## Perspectives et extensions possibles
+
+Une extension naturelle de ce projet consisterait à tester des modèles déjà pré-entraînés spécifiquement sur des tweets ou sur des données issues des réseaux sociaux. En effet, les modèles utilisés dans ce projet (BERT, DistilBERT, RoBERTa) restent des modèles généralistes, pré-entraînés sur des corpus web variés, mais pas exclusivement sur le langage particulier de Twitter.
+
+Or, les tweets possèdent des caractéristiques linguistiques spécifiques : abréviations, hashtags, fautes de frappe, emojis, langage informel ou encore forte dépendance au contexte. Des modèles spécialisés peuvent donc mieux capturer ces particularités.
+
+Cette approche présenterait également un avantage important en termes de coût de calcul. Le fine-tuning complet des Transformers peut être très long et nécessiter des ressources GPU importantes ; dans notre cas, certaines expérimentations pouvaient prendre jusqu’à une journée entière d’exécution. Utiliser des modèles déjà adaptés au domaine des tweets permettrait potentiellement de réduire considérablement le temps d’entraînement, de limiter les besoins en ressources matérielles et d’obtenir de meilleures performances grâce à une meilleure compréhension du langage propre à Twitter.
+
+Un exemple particulièrement pertinent serait **BERTweet**, un modèle dérivé de RoBERTa et pré-entraîné sur plus de 850 millions de tweets. Ce type de modèle pourrait constituer une piste très intéressante pour améliorer à la fois l’efficacité et les performances du pipeline de classification.
+
+---
+
+## Auteurs
 
 | <div align="center"><img src="https://github.com/ahmadouniass.png" width="100" style="border-radius:50%"></div> | <div align="center"><img src="https://github.com/Khadidiatou1010.png" width="100" style="border-radius:50%"></div> | <div align="center"><img src="https://github.com/dior204.png" width="100" style="border-radius:50%"></div> | <div align="center"><img src="https://github.com/Kerencia2.png" width="100" style="border-radius:50%"></div> |
 | :---: | :---: | :---: | :---: |
